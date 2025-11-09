@@ -23,7 +23,7 @@ const UserSchema=new Schema<User & Document>({
     email:{type:String,required:true,unique:true},
     password:{type:String,required:true},
     confirmPassword:{type:String,required:true},
-    role:{type:String,enum:["user","admin"],default:"user"},
+    role:{type:String,enum:["user","admin"],default:"admin"},
     wallet:{
         balance:{type:Number,default:0}
     }

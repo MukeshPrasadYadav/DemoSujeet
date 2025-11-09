@@ -3,6 +3,7 @@ import { logger } from "../Utils/logger";
 import User from "../Models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { userInfo } from "os";
 
 
 
@@ -121,21 +122,43 @@ const VerifyMe = CatchAsync(async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
+    const decoded = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET as string
+    ) as { userId: string };
 
-    // optional: fetch user info from DB if you need it
-    // const user = await User.findById(decoded.id).select("-password");
-    console.log("l",decoded)
-    
+    // fetch user from DB without password
+    const user = await User.findById(decoded.userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
     return res.status(200).json({
       success: true,
-      user: decoded, // or user from DB if you prefer
+      userToSend:{
+        name:user.name,
+            email:user.email,
+            role:user.role,
+            balance:user.wallet.balance,
+             activeUserSince: user?.createdAt.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            }),
+        
+
+      }
     });
   } catch (err) {
     console.error("VerifyMe error:", err);
-    return res.status(403).json({ success: false, message: "Invalid or expired token" });
+    return res.status(403).json({
+      success: false,
+      message: "Invalid or expired token",
+    });
   }
 });
+
 
 
 const Logout=CatchAsync(async(req,res)=>{
