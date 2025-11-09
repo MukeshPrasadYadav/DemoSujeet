@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 
 
 const SignUP=CatchAsync(async(req,res)=>{
-    const {name,email,password}=req.body;
+    const {name,email,password,phone,confirmPassword,countryCode}=req.body;
     const ExistingUser= await User.findOne({email});
     if(ExistingUser){
         logger.error("User already exists with this email");
@@ -21,11 +21,41 @@ const SignUP=CatchAsync(async(req,res)=>{
     const user=await User.create({
         name,
         email,
-        password:hashedPassword
+        password:hashedPassword,
+        confirmPassword:hashedPassword,
+        phone,
+        countryCode,
+        createdAt:Date.now()
+    });
+     const acceessToken= await  jwt.sign(
+        {
+            userId:user._id,
+            role:user.role
+        },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        {
+            expiresIn:"1d"
+        }
+    );
+    res.cookie("accessToken",acceessToken,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        maxAge:24*60*60*1000,
     });
    return res.status(201).json({
         success:true,
         message:"User created successfully",
+         user:{
+            name:user.name,
+            email:user.email,
+            role:user.role,
+            balance:user.wallet.balance,
+             activeUserSince: user?.createdAt.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            }),
+        }
     });
      
 });
@@ -72,7 +102,12 @@ const Login=CatchAsync(async(req,res)=>{
             name:user.name,
             email:user.email,
             role:user.role,
-            balance:user.wallet.balance
+            balance:user.wallet.balance,
+             activeUserSince: user?.createdAt.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            }),
         }
         
     });
