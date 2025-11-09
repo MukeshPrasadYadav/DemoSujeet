@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import UserModal from "./UserModal";
 import { useAuth } from "@/Providers/AuthProvide";
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -22,6 +23,7 @@ interface User {
 }
 
 const Dashboard = () => {
+  const navigate=useNavigate();
   const [opean, setOpean] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -61,7 +63,10 @@ const Dashboard = () => {
         </div>
 
         {/* Example Logo or text */}
-        <Button onClick={()=>logout()}>LogOut</Button>
+        <Button onClick={()=>{
+          logout();
+          navigate('/');
+        }}>LogOut</Button>
         {/* <div className="text-xl font-semibold">Demo Admin</div> */}   
       </header>
 

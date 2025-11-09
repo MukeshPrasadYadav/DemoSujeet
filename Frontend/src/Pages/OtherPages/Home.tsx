@@ -1,18 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Dashboard from '@/components/OtherComponent/Dashboard'
 import { useAuth } from '@/Providers/AuthProvide'
-import DashboardUser from '@/components/OtherComponent/DashboardUser';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    
-    const {isLoading,role}=useAuth();
-    if(isLoading) return <>Loading...</>
-  
-    if(role==='admin') return <Dashboard/>
-    return (
-        <DashboardUser/>
-    )
-   
+  const navigate = useNavigate();
+  const { isLoading, role ,user} = useAuth();
+
+  useEffect(() => {
+    console.log(user)
+    if (!isLoading) {
+      if (user.role==='user') {
+        navigate(-1);
+      }
+    }
+  }, [isLoading, role, navigate]);
+
+  if (isLoading) return <>Loading...</>;
+
+  return <Dashboard />;
 }
 
-export default Home
+export default Home;

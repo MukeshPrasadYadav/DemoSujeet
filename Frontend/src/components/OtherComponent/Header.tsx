@@ -2,10 +2,11 @@ import { Globe, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/Providers/AuthProvide";
+import { use } from "react";
 
 const Header = () => {
   const navigate=useNavigate();
-  const {isAuthenticated,logout}=useAuth();
+  const {isAuthenticated,user,logout}=useAuth();
   return (
     <header className="w-full fixed left-0 right-0 top-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
@@ -35,7 +36,7 @@ const Header = () => {
           <Globe className="w-5 h-5 text-[#00156A] cursor-pointer" />
         <Button
   onClick={() => {
-    if (isAuthenticated) {
+    if (user!=null) {
       logout();
       navigate('/');
     } else {

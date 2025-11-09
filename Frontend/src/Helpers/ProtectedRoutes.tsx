@@ -4,8 +4,8 @@ import  { useEffect, type ReactNode } from 'react';
 import { Spinner } from "@/components/ui/spinner";
 
 const ProtectedRoutes = ({ children }: { children: ReactNode }) => {
-  const { isAuthenticated,isLoading } = useAuth();
-  console.log("user in protected route",isAuthenticated,isLoading)
+  const { user,isLoading,isAuthenticated } = useAuth();
+  console.log("user in protected route",isLoading,user)
   
 
   // useEffect(()=>{
@@ -15,7 +15,7 @@ const ProtectedRoutes = ({ children }: { children: ReactNode }) => {
   if(isLoading) return <Spinner className="h-8 w-8" />
 
 
-  if (!isAuthenticated && !isLoading) return <Navigate to ='/login'  replace/>
+  if (!user && !isLoading) return <Navigate to ='/login'  replace/>
 
   return <> {children}</>
 };

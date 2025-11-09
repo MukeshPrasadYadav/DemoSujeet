@@ -40,13 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId,setUserID]=useState('')
   const [isLoading, setIsLoading] = useState(true); // start as loading=true
 
-  const [user,setUser]=useState<Iuser>({
-    name:"",
-    email:'',
-    role:'',
-    balance:0,
-    activeUserSince:''
-  })
+  const [user,setUser]=useState<Iuser | null>(null)
   const [role,setRole]=useState('')
   useEffect(() => {
     console.log("Checking authentication status..."); 
@@ -59,10 +53,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log(res)
 
         if (res.data.success) {
-          console.log("data ",res)
+           setIsAuthenticated(true);
+           setUser(res.data.userToSend)
+          console.log("data ",res.data)
           setRole(res.data.user.role)
+          //setUser(res.data.userToSend)
           setUserID(res.data.user.userId)
-          setIsAuthenticated(true);
+         
           setIsLoading(false);
 
         } else {
