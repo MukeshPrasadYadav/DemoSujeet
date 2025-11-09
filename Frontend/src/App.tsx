@@ -9,6 +9,8 @@ import ProtectedRoutes from "./Helpers/ProtectedRoutes";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./Providers/AuthProvide";
 import Home from "./Pages/OtherPages/Home";
+import LandingPage from "./Pages/LandingPage";
+import Profile from "./Pages/OtherPages/ProfilePage";
 
 
 function App() {
@@ -19,20 +21,26 @@ function App() {
    
     <Router>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
 
         <Route path="/login" element={
-          <ProtectedSignIn>
+         // <ProtectedSignIn>
           <Login />
-          </ProtectedSignIn>
+         // </ProtectedSignIn>
           } />
 
           <Route path="/signup" element={
-          <ProtectedSignIn>
+        //  <ProtectedSignIn>
           <SignUp />
-         </ProtectedSignIn>
+       //  </ProtectedSignIn>
           } />
+          <Route path="/profile" element={
+            <ProtectedRoutes>
+            <Profile />
+            </ProtectedRoutes>
+            } />
 
-        <Route path="/" element={
+        <Route path="/home" element={
           <ProtectedRoutes>
             <Home />
           </ProtectedRoutes>

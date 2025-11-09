@@ -8,6 +8,7 @@ interface Iuser{
   email:string,
   balance:number,
   role:string,
+  activeUserSince:string,
 
 }
 
@@ -17,6 +18,7 @@ interface AuthContextType {
     email:string
     role:string
     balance:number,
+    activeUserSince:string,
   }>>;
   setRole:React.Dispatch<React.SetStateAction<string>>;
   role:string,
@@ -36,13 +38,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId,setUserID]=useState('')
-  const [isLoading, setIsLoading] = useState(false); // start as loading=true
+  const [isLoading, setIsLoading] = useState(true); // start as loading=true
 
   const [user,setUser]=useState<Iuser>({
     name:"",
     email:'',
     role:'',
-    balance:0
+    balance:0,
+    activeUserSince:''
   })
   const [role,setRole]=useState('')
   useEffect(() => {
@@ -53,8 +56,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const res = await axios.get("http://localhost:5000/api/auth/verify", {
           withCredentials: true,
         });
+        console.log(res)
 
         if (res.data.success) {
+          console.log("data ",res)
           setRole(res.data.user.role)
           setUserID(res.data.user.userId)
           setIsAuthenticated(true);
@@ -84,7 +89,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         name:"",
         email:'',
         role:'',
-        balance:0
+        balance:0,
+        activeUserSince: ''
       })
       
       setIsAuthenticated(false)

@@ -38,7 +38,7 @@ const Login = () => {
         console.log("User data after login:", res.data.user);
         toast.success("Login Successful!");
         setIsAuthenticated(true);
-        navigate("/");
+        navigate("/profile");
         
       }
        else {
