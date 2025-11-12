@@ -140,6 +140,8 @@ const VerifyMe = CatchAsync(async (req, res) => {
         name:user.name,
             email:user.email,
             role:user.role,
+            profilt:user.profit.balance,
+            loss:user.loss.balance,
             balance:user.wallet.balance,
              activeUserSince: user?.createdAt.toLocaleDateString("en-US", {
             year: "numeric",

@@ -1,37 +1,59 @@
-import mongoose,{Document,model,Schema } from "mongoose"
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-
-interface User{
-    countryCode:string,
-    name:string;
-    phone:string;
-    email:string;
-    password:string;
-    confirmPassword:string;
-    role: "user" | "admin";
-    wallet:{
-        balance:number;
-    },
-    createdAt:Date
+// ✅ Define a separate interface for type safety
+export interface IUser {
+  images: string[];
+  countryCode: string;
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: "user" | "admin";
+  profit: {
+    balance: number;
+  };
+  loss: {
+    balance: number;
+  };
+  wallet: {
+    balance: number;
+  };
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
+// ✅ Extend Document to include _id and Mongoose-specific fields
+export interface IUserDocument extends IUser, Document {}
 
-const UserSchema=new Schema<User & Document>({
-    countryCode:{type:String,required:true},
-    phone:{type:String,required:true},
-    name:{type:String,required:true},
-    email:{type:String,required:true,unique:true},
-    password:{type:String,required:true},
-    confirmPassword:{type:String,required:true},
-    role:{type:String,enum:["user","admin"],default:"admin"},
-    wallet:{
-        balance:{type:Number,default:0}
-    }
-},
-{
-    timestamps:true
-},
-)
+// ✅ Schema definition
+const UserSchema = new Schema<IUserDocument>(
+  {
+    countryCode: { type: String, required: true },
+    phone: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    confirmPassword: { type: String, required: true },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
 
-const User=model<User & Document>("User",UserSchema)
+    images: { type: [String], default: [] },
+
+    profit: {
+      balance: { type: Number, default: 0 },
+    },
+
+    loss: {
+      balance: { type: Number, default: 0 },
+    },
+
+    wallet: {
+      balance: { type: Number, default: 0 },
+    },
+  },
+  { timestamps: true }
+);
+
+// ✅ Create and export model
+const User: Model<IUserDocument> = mongoose.model<IUserDocument>("User", UserSchema);
 export default User;
