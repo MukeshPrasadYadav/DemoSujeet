@@ -1,17 +1,14 @@
 import { useAuth } from "@/Providers/AuthProvide";
 import { Navigate } from 'react-router-dom';
-import  { useEffect, type ReactNode } from 'react';
+import  {  type ReactNode } from 'react';
 import { Spinner } from "@/components/ui/spinner";
 
 const ProtectedRoutes = ({ children }: { children: ReactNode }) => {
-  const { user,isLoading,isAuthenticated } = useAuth();
+  const { user,isLoading } = useAuth();
   console.log("user in protected route",isLoading,user)
   
 
-  // useEffect(()=>{
 
-  // },[isUser])
-  // if(isLoading) return <div>loading...</div>
   if(isLoading) return <Spinner className="h-8 w-8" />
 
 

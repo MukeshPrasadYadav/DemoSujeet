@@ -11,6 +11,7 @@ import { AuthProvider } from "./Providers/AuthProvide";
 import Home from "./Pages/OtherPages/Home";
 import LandingPage from "./Pages/LandingPage";
 import Profile from "./Pages/OtherPages/ProfilePage";
+import PageWithGraph from "./Pages/OtherPages/PageWithGraph";
 
 
 function App() {
@@ -38,6 +39,10 @@ function App() {
             <ProtectedRoutes>
             <Profile />
             </ProtectedRoutes>
+            } />
+
+            <Route path="/Invest" element={
+              <PageWithGraph />
             } />
 
         <Route path="/home" element={

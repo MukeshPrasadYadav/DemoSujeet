@@ -10,19 +10,23 @@ import { object, number } from "yup";
 import axios from "axios";
 import { toast } from "sonner";
 
+
+interface Notification{
+  
+}
 interface UserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: {
-    id:string
+    _id: string;
     name: string;
     email: string;
     userType: string;
-    wallet: {
-      balance: number;
-    };
+    profit: { balance: number };
+    loss: { balance: number };
+    wallet: { balance: number };
   };
-  setRefresh: (res: boolean) => void; 
+  setRefresh: (res: boolean) => void;
 }
 
 const UserModal: React.FC<UserModalProps> = ({ open, onOpenChange, user, setRefresh }) => {
@@ -30,10 +34,14 @@ const UserModal: React.FC<UserModalProps> = ({ open, onOpenChange, user, setRefr
 
   const validationSchema = object({
     amount: number().required("Amount is required").min(0, "Amount cannot be negative"),
+    profit: number().required("Profit is required").min(0, "Profit cannot be negative"),
+    loss: number().required("Loss is required").min(0, "Loss cannot be negative"),
   });
 
   const initialValues = {
     amount: user.wallet.balance,
+    profit: user.profit.balance,
+    loss: user.loss.balance,
   };
 
   const handleSubmit = async (values: typeof initialValues) => {
@@ -41,16 +49,21 @@ const UserModal: React.FC<UserModalProps> = ({ open, onOpenChange, user, setRefr
     try {
       const res = await axios.post(
         `http://localhost:5000/api/users/changeAmount`,
-        { userId: user._id, amount: values.amount },
+        {
+          userId: user._id,
+          amount: values.amount,
+          profit: values.profit,
+          loss: values.loss,
+        },
         { withCredentials: true }
       );
 
       if (res.data.success) {
-        toast.success("Amount updated successfully!");
+        toast.success("User data updated successfully!");
         onOpenChange(false);
         setRefresh(true);
       } else {
-        toast.error("Failed to update amount.");
+        toast.error("Failed to update user data.");
         setRefresh(false);
       }
     } catch (err) {
@@ -68,13 +81,18 @@ const UserModal: React.FC<UserModalProps> = ({ open, onOpenChange, user, setRefr
           <DialogTitle>Update User Wallet</DialogTitle>
         </DialogHeader>
 
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-          {({ values, errors, touched, handleChange, handleSubmit }) => (
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {({ errors, touched, handleSubmit }) => (
             <Form className="space-y-4" onSubmit={handleSubmit}>
               {/* Name */}
               <div className="flex flex-col gap-1">
                 <Label>Full Name</Label>
-                <Input value={`${user.name}` } disabled />
+                <Input value={user.name} disabled />
               </div>
 
               {/* Email */}
@@ -83,23 +101,34 @@ const UserModal: React.FC<UserModalProps> = ({ open, onOpenChange, user, setRefr
                 <Input value={user.email} disabled />
               </div>
 
-              {/* User Type */}
-              
-              {/* Amount */}
+              {/* Wallet Amount */}
               <div className="flex flex-col gap-1">
-                <Label>Amount</Label>
-                <Field
-                  as={Input}
-                  type="number"
-                  name="amount"
-                  value={values.amount}
-                  onChange={handleChange}
-                />
+                <Label>Wallet Balance</Label>
+                <Field as={Input} type="number" name="amount" />
                 {errors.amount && touched.amount && (
                   <p className="text-sm text-red-600">{errors.amount}</p>
                 )}
               </div>
 
+              {/* Profit */}
+              <div className="flex flex-col gap-1">
+                <Label>Profit</Label>
+                <Field as={Input} type="number" name="profit" />
+                {errors.profit && touched.profit && (
+                  <p className="text-sm text-red-600">{errors.profit}</p>
+                )}
+              </div>
+
+              {/* Loss */}
+              <div className="flex flex-col gap-1">
+                <Label>Loss</Label>
+                <Field as={Input} type="number" name="loss" />
+                {errors.loss && touched.loss && (
+                  <p className="text-sm text-red-600">{errors.loss}</p>
+                )}
+              </div>
+
+              {/* Buttons */}
               <div className="flex justify-between mt-4">
                 <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                   Back

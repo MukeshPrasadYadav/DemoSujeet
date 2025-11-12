@@ -6,6 +6,8 @@ import axios from "axios";
 interface Iuser{
   name:string,
   email:string,
+  profit:number,
+  loss:number,
   balance:number,
   role:string,
   activeUserSince:string,
@@ -18,6 +20,8 @@ interface AuthContextType {
     email:string
     role:string
     balance:number,
+    profit:number,
+    loss:number,
     activeUserSince:string,
   }>>;
   setRole:React.Dispatch<React.SetStateAction<string>>;
@@ -77,18 +81,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
+      setIsLoading(true)
       const res=await axios.post(
         "http://localhost:5000/api/auth/logout",
         {},
         { withCredentials: true }
       );
-      setUser({
-        name:"",
-        email:'',
-        role:'',
-        balance:0,
-        activeUserSince: ''
-      })
+      setUser(null)
+      setIsLoading(false)
       
       setIsAuthenticated(false)
       console.log("Logged out successfully",res);
@@ -96,6 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error("Logout failed", err);
       setIsAuthenticated(true);
+      setIsLoading(false)
     }
   };
 
